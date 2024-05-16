@@ -27,7 +27,7 @@ def printrdf(wflow: Process, ctx: ContextType, style: str) -> str:
     rdf = gather(wflow, ctx).serialize(format=style, encoding="utf-8")
     if not rdf:
         return ""
-    return rdf.decode("utf-8")
+    return str(rdf, "utf-8")
 
 
 def lastpart(uri: Any) -> str:
@@ -51,7 +51,7 @@ def dot_with_parameters(g: Graph, stdout: Union[TextIO, StreamWriter]) -> None:
 
     for step, run, _ in qres:
         stdout.write(
-            '"%s" [label="%s"]\n' % (lastpart(step), f"{lastpart(step)} ({lastpart(run)})")
+            '"{}" [label="{}"]\n'.format(lastpart(step), f"{lastpart(step)} ({lastpart(run)})")
         )
 
     qres = cast(
@@ -170,7 +170,7 @@ def dot_without_parameters(g: Graph, stdout: Union[TextIO, StreamWriter]) -> Non
 
         if str(runtype) != "https://w3id.org/cwl/cwl#Workflow":
             stdout.write(
-                '"%s" [label="%s"]\n' % (dotname[step], urllib.parse.urldefrag(str(step))[1])
+                f'"{dotname[step]}" [label="{urllib.parse.urldefrag(str(step))[1]}"]\n'  # noqa: B907
             )
 
     if currentwf is not None:

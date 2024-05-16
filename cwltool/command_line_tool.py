@@ -693,7 +693,7 @@ class CommandLineTool(Process):
         for i, t2 in enumerate(ls):
             if not isinstance(t2, Mapping):
                 raise SourceLine(initialWorkdir, "listing", WorkflowException, debug).makeError(
-                    "Entry at index %s of listing is not a record, was %s" % (i, type(t2))
+                    f"Entry at index {i} of listing is not a record, was {type(t2)}"
                 )
 
             if "entry" not in t2:
@@ -715,7 +715,9 @@ class CommandLineTool(Process):
 
             if not isinstance(t2["entry"], Mapping):
                 raise SourceLine(initialWorkdir, "listing", WorkflowException, debug).makeError(
-                    "Entry at index %s of listing is not a record, was %s" % (i, type(t2["entry"]))
+                    "Entry at index {} of listing is not a record, was {}".format(
+                        i, type(t2["entry"])
+                    )
                 )
 
             if t2["entry"].get("class") not in ("File", "Directory"):
@@ -864,7 +866,7 @@ class CommandLineTool(Process):
                         and "checksum" in e
                         and e["checksum"] != "sha1$hash"
                     ):
-                        return cast(Optional[str], e["checksum"])
+                        return cast(str, e["checksum"])
                 return None
 
             def remove_prefix(s: str, prefix: str) -> str:
@@ -1367,8 +1369,8 @@ class CommandLineTool(Process):
                     else:
                         if binding.get("loadContents"):
                             with fs_access.open(cast(str, rfile["location"]), "rb") as f:
-                                files["contents"] = content_limit_respected_read_bytes(f).decode(
-                                    "utf-8"
+                                files["contents"] = str(
+                                    content_limit_respected_read_bytes(f), "utf-8"
                                 )
                         if compute_checksum:
                             with fs_access.open(cast(str, rfile["location"]), "rb") as f:

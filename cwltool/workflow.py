@@ -15,6 +15,7 @@ from typing import (
 )
 from uuid import UUID
 
+from mypy_extensions import mypyc_attr
 from ruamel.yaml.comments import CommentedMap
 from schema_salad.exceptions import ValidationException
 from schema_salad.sourceline import SourceLine, indent
@@ -63,6 +64,7 @@ def default_make_tool(toolpath_object: CommentedMap, loadingContext: LoadingCont
 context.default_make_tool = default_make_tool
 
 
+@mypyc_attr(serializable=True)
 class Workflow(Process):
     def __init__(
         self,

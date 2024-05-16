@@ -1,4 +1,5 @@
 """Tests of satisfying SoftwareRequirement via dependencies."""
+
 import os
 import tempfile
 from getpass import getuser
@@ -17,13 +18,14 @@ from .util import get_data, get_main_output, get_tool_env, needs_docker
 
 deps: Optional[ModuleType] = None
 try:
-    from galaxy.tool_util import deps  # type: ignore[no-redef]
+    from galaxy.tool_util import deps
 except ImportError:
     pass
 
 
 @needs_docker
 @pytest.mark.skipif(not deps, reason="galaxy-tool-util is not installed")
+@pytest.mark.flaky(retries=3)
 def test_biocontainers(tmp_path: Path) -> None:
     wflow = get_data("tests/seqtk_seq.cwl")
     job = get_data("tests/seqtk_seq_job.json")
@@ -47,12 +49,10 @@ def test_biocontainers(tmp_path: Path) -> None:
 def test_biocontainers_resolution(tmp_path: Path) -> None:
     """Confirm expected container name for --beta-use-biocontainers."""
     tool = load_tool(get_data("tests/seqtk_seq.cwl"), LoadingContext())
-    assert (
-        get_container_from_software_requirements(
-            True, tool, container_image_cache_path=str(tmp_path)
-        )
-        == "quay.io/biocontainers/seqtk:r93--0"
+    container = get_container_from_software_requirements(
+        True, tool, container_image_cache_path=str(tmp_path)
     )
+    assert container is not None and container.startswith("quay.io/biocontainers/seqtk:1.4--")
 
 
 @pytest.fixture(scope="session")

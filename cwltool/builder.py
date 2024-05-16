@@ -1,4 +1,5 @@
 """Command line builder."""
+
 import copy
 import logging
 import math
@@ -85,7 +86,7 @@ def content_limit_respected_read(f: IO[bytes]) -> str:
     :returns: the file contents
     :raises WorkflowException: if the file is too large
     """
-    return content_limit_respected_read_bytes(f).decode("utf-8")
+    return str(content_limit_respected_read_bytes(f), "utf-8")
 
 
 def substitute(value: str, replace: str) -> str:
@@ -532,7 +533,7 @@ class Builder(HasReqsHints):
                                     "Reference, a single format string, or a list of "
                                     "format strings. But the list cannot contain CWL "
                                     "Expressions or CWL Parameter References. List "
-                                    f"entry number {index+1} contains the following "
+                                    f"entry number {index + 1} contains the following "
                                     "unallowed CWL Parameter Reference or Expression: "
                                     f"{entry!r}."
                                 )
